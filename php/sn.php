@@ -5,7 +5,7 @@ if (!extension_loaded('php_dyjcrypt'))
     }
 
 
-    echo call_function();
+    echo dyjGetSnCode();
 
 
 

@@ -95,7 +95,7 @@ PHP_FUNCTION(dyjencode)
 解密函数
 
 **/
-/*PHP_FUNCTION(dyjdecode)
+PHP_FUNCTION(dyjdecode)
 {
 zend_string *strg;
 
@@ -118,7 +118,7 @@ _dyj_decode(ZSTR_VAL(strg) + sizeof(dyj_header), len); //跳指针
 }
 
 RETURN_STR(zend_string_init(ZSTR_VAL(strg) + sizeof(dyj_header), len, 0));
-}*/
+}
 
 /*
 获取特征码
@@ -139,7 +139,7 @@ PHP_FUNCTION(dyjGetSnCode)
 
 
 /*
-获取特征码
+debug 函数
 */
 PHP_FUNCTION(testdebug_function)
 {
@@ -244,7 +244,7 @@ PHP_MINFO_FUNCTION(dyjcrypt)
  */
 const zend_function_entry dyjcrypt_functions[] = {
 	PHP_FE(dyjencode,	NULL)		/* For testing, remove later. */
-	//PHP_FE(dyjdecode,	NULL)		/* For testing, remove later. */
+	//PHP_FE(dyjdecode,	NULL)		//生产环境不要提供此函数
 	PHP_FE(dyjGetSnCode,NULL)
 	PHP_FE(testdebug_function,NULL)
 	PHP_FE_END	/* Must be the last line in dyjcrypt_functions[] */

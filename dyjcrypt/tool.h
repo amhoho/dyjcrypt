@@ -28,10 +28,14 @@ const u_char dyj_header[] = {
 /**
 秘钥，用来加密数据
 **/
-const u_char dyj_key[] = {
+u_char dyj_key[200];
+/*const u_char dyj_key[] = {
 	0x41,0x75,0x74,0x68,0x6f,0x72,0x20,0x62,0x79,0x20,0x64,0x75,0x79,0x75,0x6e,0x6a,0x69,
 	0x61,0x6e,0x67
-};
+};*/
+
+
+
 //加密字符串
 const char key_secret[] = "20190114";
 
@@ -246,11 +250,11 @@ BOOL _dyj_checkSn() {
 	php_printf("%s\r\n",key_secret);
 	php_printf("%s\r\n", time);*/
 	//计算token
-	memcpy(token,cpuCode, (int)strlen(cpuCode));
+	strcpy(token, cpuCode);
+	//memcpy(token,cpuCode, (int)strlen(cpuCode));
 	strcat(token, key_secret);
 	strcat(token, time);
 
-	//php_printf("%s\r\n", cpuCode);
 	//php_printf("%s\r\n", token);
 	_dyj_md5(token);
 
@@ -285,6 +289,7 @@ BOOL _dyj_checkSn() {
 		char* data = cJSON_GetObjectItem(cjson, "data")->valuestring;
 		if (code == 0) { //相等,code = 0
 			if (strcmp(data, cpuCode) == 0) {//比较秘钥是否相等
+				memcpy(dyj_key,data,(int)strlen(data)); //动态秘钥加密文件
 				cJSON_Delete(cjson);
 				return TRUE;
 			}
