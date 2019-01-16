@@ -22,8 +22,10 @@ php-7.1.13
 https://blog.csdn.net/xunying6967/article/details/78460068 
 https://github.com/lihancong/tonyenc 
 https://github.com/liexusong/php-beast 
-sdk和deps 下载 https://windows.php.net/downloads/php-sdk/
-解决不能运行js文件的问题。 https://blog.csdn.net/ikscher/article/details/7934756
+sdk和deps 下载 
+https://windows.php.net/downloads/php-sdk/
+解决不能运行js文件的问题。
+https://blog.csdn.net/ikscher/article/details/7934756
 php执行顺序和原理
 https://www.cnblogs.com/jingzhishen/p/4328748.html
 
