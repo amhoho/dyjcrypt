@@ -1,9 +1,0 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-    正在创建库 ..\Release\php_dyjcrypt.lib 和对象 ..\Release\php_dyjcrypt.exp
-  正在生成代码
-  3 of 39 functions ( 7.7%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
-  已完成代码的生成
-  dyjcrypt.vcxproj -> C:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\..\Release\php_dyjcrypt.dll
-  dyjcrypt.vcxproj -> ..\Release\php_dyjcrypt.pdb (Full PDB)
