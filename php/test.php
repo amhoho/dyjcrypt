@@ -1,3 +1,4 @@
 <?php
-echo dyjGetSnCode();
+echo "hello world";
+
 ?>
