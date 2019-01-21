@@ -1,4 +1,5 @@
 <?php
+include  "confuse.php";
 if (version_compare(PHP_VERSION, 7, '<'))
     die("PHP must later than version 7.0\n");
 if (php_sapi_name() !== 'cli')
@@ -35,7 +36,15 @@ function handle($file)
     $fileSize = filesize($file);
     if ($fp && $fileSize > 0 ) {
 
-        $data = dyjencode(fread($fp, $fileSize));
+
+        $data = fread($fp, $fileSize);
+
+        //开启混淆加密模式
+        $data = confuse($data);
+
+
+        //开启扩展加密
+        $data = dyjencode($data);
 
         if ($data !== false && !empty($data)) {
             if (file_put_contents($file, '') !== false) {
