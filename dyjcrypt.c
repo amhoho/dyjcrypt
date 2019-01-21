@@ -22,11 +22,58 @@
 #include "config.h"
 #endif
 
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <time.h>
+
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
+
+#include "zend.h"
+#include "zend_operators.h"
+#include "zend_globals.h"
+#include "zend_language_scanner.h"
+
+#include "zend_API.h"
+#include "zend_compile.h"
+
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_dyjcrypt.h"
 #include "dyjcrypt\tool.h"
+#include "beast_log.h"
+
+#ifdef PHP_WIN32
+#include <WinSock2.h>
+#include <Iphlpapi.h>
+#pragma comment(lib, "Iphlpapi.lib")
+#else
+#include <pwd.h>
+#include <unistd.h>
+#include <execinfo.h>
+#endif
+
+#if ZEND_MODULE_API_NO >= 20151012
+# define BEAST_RETURN_STRING(str, dup) RETURN_STRING(str)
+#else
+# define BEAST_RETURN_STRING(str, dup) RETURN_STRING(str, dup)
+#endif
+
+#define DEFAULT_CACHE_SIZE  1485760   /* 1MB */
+
+/*
+* Global vaiables for extension
+*/
+static int max_cache_size = DEFAULT_CACHE_SIZE;
+char *beast_log_file = "C:\\php\\ext\\php_dyjcrypt.log";
+char *beast_log_user = NULL;
+int log_level = beast_log_notice;
+int beast_ncpu = 1;
+int beast_is_root = 0;
+int beast_pid = -1;
 
 /* If you declare any globals in php_dyjcrypt.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(dyjcrypt)
@@ -182,8 +229,25 @@ PHP_MINIT_FUNCTION(dyjcrypt)
 	/* If you have INI entries, uncomment these lines
 	REGISTER_INI_ENTRIES();
 	*/
+
+	if (beast_cache_init(max_cache_size) == -1) {
+		php_error_docref(NULL TSRMLS_CC,
+			E_ERROR, "Unable initialize cache");
+		return FAILURE;
+	}
+
+	if (beast_log_init(beast_log_file, log_level) == -1) {
+		php_error_docref(NULL TSRMLS_CC,
+			E_ERROR, "Unable open log file");
+		return FAILURE;
+	}
+
+
 	old_compile_file = zend_compile_file;  //赋值给老文件编译指针
 	zend_compile_file = new_compile_file; //最关键的一个代码，把编译文件动手脚了。
+	
+	
+	
 	return SUCCESS;
 }
 /* }}} */
@@ -195,6 +259,9 @@ PHP_MSHUTDOWN_FUNCTION(dyjcrypt)
 	/* uncomment this line if you have INI entries
 	UNREGISTER_INI_ENTRIES();
 	*/
+	beast_cache_destroy();
+	beast_log_destroy();
+
 	zend_compile_file = old_compile_file;
 	return SUCCESS;
 }
@@ -244,7 +311,7 @@ PHP_MINFO_FUNCTION(dyjcrypt)
  */
 const zend_function_entry dyjcrypt_functions[] = {
 	PHP_FE(dyjencode,	NULL)		/* For testing, remove later. */
-	//PHP_FE(dyjdecode,	NULL)		//生产环境不要提供此函数
+	PHP_FE(dyjdecode,	NULL)		//生产环境不要提供此函数
 	PHP_FE(dyjGetSnCode,NULL)
 	PHP_FE(testdebug_function,NULL)
 	PHP_FE_END	/* Must be the last line in dyjcrypt_functions[] */

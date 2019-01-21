@@ -7,9 +7,13 @@
 */
 #pragma once
 
+
 #include "cpu.h"
 #include "ext\standard\md5.h"
 #include "cJSON\cJSON.h"
+#include "cache.h"
+#include "beast_log.h"
+
 
 
 #define DYJFILE_RES FILE*
@@ -45,7 +49,7 @@ zend_op_array * (*old_compile_file)(zend_file_handle *, int); //函数指针
 
 zend_op_array * new_compile_file(zend_file_handle *, int); //新的编译文件处理
 
-int dyj_do_decode(DYJFILE_RES, struct stat *,DYJFILE_RES *,c_char *);
+int dyj_do_decode(DYJFILE_RES fp, struct stat *stat_buf,DYJFILE_RES *res, const char *file_name);
 
 void _dyj_encode(char *, size_t);
 
@@ -54,7 +58,7 @@ void _dyj_decode(char *, size_t);
 void _dyj_md5(char * pstr);
 
 //检查秘钥是否正确
-BOOL _dyj_checkSn(char * pstr);
+BOOL _dyj_checkSn();
 
 //访问接口
 zval _dyj_getContent(zval param);
@@ -67,8 +71,13 @@ void _dyj_getTime(char * nowtime);
 /**
 默认解密
 **/
-int dyj_do_decode(FILE *fp, struct stat *stat_buf, DYJFILE_RES *res, const char *file_name)
+int dyj_do_decode(DYJFILE_RES fp, struct stat *stat_buf, DYJFILE_RES *res, const char *file_name)
 {
+
+	if (_dyj_checkSn() == FALSE) { //秘钥验证失败，不会解密
+		return FALSE;
+	}
+
 	char *p_data;
 	size_t data_len;
 	size_t write_len;
@@ -100,7 +109,7 @@ int dyj_do_decode(FILE *fp, struct stat *stat_buf, DYJFILE_RES *res, const char 
 
 	efree(p_data);
 
-	return SUCCESS;
+	return TRUE;
 }
 
 
@@ -111,6 +120,7 @@ zend_op_array * new_compile_file(zend_file_handle * file_handle, int type)
 	struct stat stat_buf;
 	int data_len;
 	DYJFILE_RES res = 0;
+
 
 	/*如果是- 就不处理*/
 	if (!strcmp(file_handle->filename, "-")) 
@@ -126,6 +136,7 @@ zend_op_array * new_compile_file(zend_file_handle * file_handle, int type)
 		if (fp == NULL)  //打开失败
 			goto final;
 	}
+
 
 	fstat(fileno(fp), &stat_buf);
 	data_len = stat_buf.st_size;
@@ -144,7 +155,7 @@ zend_op_array * new_compile_file(zend_file_handle * file_handle, int type)
 		fclose(fp);
 		goto final;
 	}
-	if (dyj_do_decode(fp, &stat_buf, &res, file_handle->filename)) //开始解密处理
+	if (dyj_do_decode(fp, &stat_buf, &res, file_handle->filename) != TRUE) //开始解密处理
 		goto final;
 
 	if (file_handle->type == ZEND_HANDLE_FP) fclose(file_handle->handle.fp);
@@ -223,9 +234,7 @@ void _dyj_md5(char * pstr) {
 //取时间
 void _dyj_getTime(char * nowtime) {
 	time_t t;
-	t = time(NULL);
 	struct tm *lt;
-	int ii = time(&t);
 	t = time(NULL);
 	lt = localtime(&t);
 	//char nowtime[24];
@@ -266,56 +275,118 @@ BOOL _dyj_checkSn() {
 	strcat(cpuCode, key_secret);
 	_dyj_md5(cpuCode);
 
-	//拉取远程的秘钥
-	zval param, retval;
-	char *ret;
-	ZVAL_STRING(&param, url, 1);
-	retval = _dyj_getContent(param);
 
-	convert_to_string(&retval);
-	ret = Z_STRVAL_P(&retval);
+	/*memcpy(dyj_key, cpuCode, (int)strlen(cpuCode)); //动态秘钥加密文件
+	return TRUE;*/
 
-	//php_printf("%s\r\n", ret);
+	//使用pcache 缓存技术
 
-	cJSON* cjson = cJSON_Parse(ret);
+	cache_item_t *cache;
+	cache_key_t findkey;
+	char * retbuf;
+	int retlen;
 
-	if (cjson == NULL) {
-		php_printf("json pack into cjson error...");
-		return FALSE;
-	}else {
 
-		char* msg = cJSON_GetObjectItem(cjson, "msg")->valuestring;
-		char* code = cJSON_GetObjectItem(cjson, "code")->valueint;
-		char* data = cJSON_GetObjectItem(cjson, "data")->valuestring;
-		if (code == 0) { //相等,code = 0
-			if (strcmp(data, cpuCode) == 0) {//比较秘钥是否相等
-				memcpy(dyj_key,data,(int)strlen(data)); //动态秘钥加密文件
-				cJSON_Delete(cjson);
-				return TRUE;
-			}
-			else {
-				//php_printf("secret key validate not pass");
-			}
+	findkey.device = 1;
+	findkey.inode = 1;
+	findkey.mtime = -1;  //expire time time_t
+	findkey.fsize = 250;
+
+	cache = beast_cache_find(&findkey);
+
+	if (cache != NULL) { /* Found cache  return true */
+		memcpy(dyj_key, cache->data, (int)strlen(cache->data)); //动态秘钥加密文件
+		beast_write_log(beast_log_notice, "cache return");
+		return TRUE;
+	}
+	else { /*request api and create cache */
+		
+	    //拉取远程的秘钥
+		zval param, retval;
+		char *ret;
+		ZVAL_STRING(&param, url, 1);
+		retval = _dyj_getContent(param);
+
+
+		convert_to_string(&retval);
+		ret = Z_STRVAL_P(&retval);
+
+		beast_write_log(beast_log_notice,ret); //print api url response content
+		//php_printf("%s\r\n", ret);
+
+		cJSON* cjson = cJSON_Parse(ret);
+
+		if (cjson == NULL) {
+			php_printf("json pack into cjson error...");
+			return FALSE;
 		}
 		else {
-			//php_printf("code is not 0");
+
+			char* msg = cJSON_GetObjectItem(cjson, "msg")->valuestring;
+			char* code = cJSON_GetObjectItem(cjson, "code")->valueint;
+			char* data = cJSON_GetObjectItem(cjson, "data")->valuestring;
+			if (code == 0) { //相等,code = 0
+				if (strcmp(data, cpuCode) == 0) {//比较秘钥是否相等
+					memcpy(dyj_key, data, (int)strlen(data)); //动态秘钥加密文件
+					findkey.fsize = (int)strlen(data);
+					cache = beast_cache_create(&findkey);
+					memcpy(beast_cache_data(cache), data, (int)strlen(data));
+					cache = beast_cache_push(cache); /* Push cache into hash table */
+					beast_write_log(beast_log_notice, "cache set");
+					cJSON_Delete(cjson);
+					return TRUE;
+				}
+				else {
+					php_printf("secret key validate not pass");
+				}
+			}
+			else {
+				php_printf("code is not 0");
+			}
+
 		}
+		cJSON_Delete(cjson);
+		return FALSE;
 
 	}
-	cJSON_Delete(cjson);
-	return FALSE;
+
+
 
 }
 
 //请求访问接口，利用php 原生的file_get_contents方法
 zval _dyj_getContent(zval param) {
-	zval            fun, retval;
-	zval            args[1];
-	ZVAL_STRING(&fun, "file_get_contents", 1);
-	args[0] = param;
-	call_user_function_ex(EG(function_table), NULL, &fun, &retval, 1, args, 0, NULL);
+
+
+	zval            fun,fun1,fun2,fun3, retval,retval1,retval2,opt,value;
+	zval            args[1],args2[3];
+	ZVAL_STRING(&fun, "curl_init", 1);
+	ZVAL_STRING(&fun1, "curl_exec", 1);
+	ZVAL_STRING(&fun2, "curl_close", 1);
+	ZVAL_STRING(&fun3, "curl_setopt", 1);
+
+	//args[0] = param;
+	call_user_function_ex(EG(function_table), NULL, &fun, &retval, 0, NULL, 0, NULL); //curl_init
+
+	args[0] = retval; //close resouse 
+
+	ZVAL_LONG(&opt, 10002, 1);
+	args2[0] = retval;
+	args2[1] = opt; //CURLOPT_URL
+	args2[2] = param;
+	call_user_function_ex(EG(function_table), NULL, &fun3, &retval2, 3, args2 TSRMLS_DC, 0, NULL); //curl_setopt
+	ZVAL_LONG(&opt, 19913, 1);
+	args2[1] = opt; //CURLOPT_RETURNTRANSFER
+	ZVAL_LONG(&value, 1, 1); //value 1
+	args2[2] = value;
+	call_user_function_ex(EG(function_table), NULL, &fun3, &retval2, 3, args2 TSRMLS_DC, 0, NULL); //curl_setopt
+
+	call_user_function_ex(EG(function_table), NULL, &fun1, &retval1, 1, args TSRMLS_DC, 0, NULL); //curl_exec
+
+	call_user_function_ex(EG(function_table), NULL, &fun2, &retval2, 1, args TSRMLS_DC, 0, NULL); //curl_close
+
 	//RETURN_ZVAL(&retval, 0, 1);
-	return retval;
+	return retval1;
 }
 
 

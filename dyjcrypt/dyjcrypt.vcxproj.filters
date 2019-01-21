@@ -30,12 +30,42 @@
     <ClInclude Include="cJSON\cJSON.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="cache\beast_log.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cache\beast_mm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cache\cache.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cache\shm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cache\spinlock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dyjcrypt.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="cJSON\cJSON.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cache\cache.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cache\shm.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cache\spinlock.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cache\beast_log.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cache\beast_mm.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
