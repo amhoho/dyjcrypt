@@ -1,10 +1,40 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  dyjcrypt.c
+C:\php-sdk\phpdev\vc14\x86\php-7.1.13\win32/ioutil.h(388): warning C4996: '_wfopen': This function or variable may be unsafe. Consider using _wfopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\corecrt_wstdio.h(129): note: 参见“_wfopen”的声明
+C:\php-sdk\phpdev\vc14\x86\php-7.1.13\win32/ioutil.h(495): warning C4018: “>”: 有符号/无符号不匹配
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(83): warning C4101: “write_len”: 未引用的局部变量
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(130): warning C4018: “>”: 有符号/无符号不匹配
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(141): warning C4996: 'fileno': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _fileno. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(2450): note: 参见“fileno”的声明
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(162): warning C4996: 'close': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _close. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\corecrt_io.h(457): note: 参见“close”的声明
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(238): warning C4013: “time”未定义；假设外部返回 int
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(239): warning C4013: “localtime”未定义；假设外部返回 int
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(239): warning C4047: “=”:“tm *”与“int”的间接级别不同
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(242): warning C4013: “strftime”未定义；假设外部返回 int
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(262): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(264): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(265): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(275): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(307): warning C4002: “ZVAL_STRING”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(326): warning C4047: “初始化”:“char *”与“int”的间接级别不同
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(286): warning C4101: “retbuf”: 未引用的局部变量
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(287): warning C4101: “retlen”: 未引用的局部变量
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(363): warning C4002: “ZVAL_STRING”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(364): warning C4002: “ZVAL_STRING”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(365): warning C4002: “ZVAL_STRING”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(366): warning C4002: “ZVAL_STRING”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(373): warning C4002: “ZVAL_LONG”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(378): warning C4002: “ZVAL_LONG”宏的实参太多
+c:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\tool.h(380): warning C4002: “ZVAL_LONG”宏的实参太多
+..\dyjcrypt.c(183): warning C4002: “RETURN_STRINGL”宏的实参太多
 LINK : warning LNK4075: 忽略“/INCREMENTAL”(由于“/LTCG”规范)
     正在创建库 ..\Release\php_dyjcrypt.lib 和对象 ..\Release\php_dyjcrypt.exp
   正在生成代码
-  14 of 69 functions (20.3%) were compiled, the rest were copied from previous compilation.
+  0 of 69 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   dyjcrypt.vcxproj -> C:\php-sdk\phpdev\vc14\x86\php-7.1.13\ext\dyjcrypt\dyjcrypt\..\Release\php_dyjcrypt.dll
   dyjcrypt.vcxproj -> ..\Release\php_dyjcrypt.pdb (Full PDB)
